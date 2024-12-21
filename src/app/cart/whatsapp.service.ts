@@ -1,19 +1,19 @@
 import type { Housing } from "@/app/products/housing";
 import type { Car } from "@/app/products/cars";
 import { CartService } from "@/app/cart/cart.service";
-import { UserService } from "@/app/user/user.service";
 import { Injectable } from "@angular/core";
 import { environment } from "@/environments/environment";
+import { AuthService } from "@/app/auth/auth.service";
 
-@Injectable()
+@Injectable({ providedIn: 'root' })
 export class WhatsappService {
     constructor(
-        private readonly userService: UserService,
+        private readonly authService: AuthService,
         private readonly cartService: CartService
     ) { }
 
     async prepareMessage() {
-        const user = this.userService.getUserLocalStorage()
+        const user = this.authService.getCurrentUser()
         const items = await this.cartService.getItems()
 
         if (!user) {

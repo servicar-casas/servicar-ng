@@ -1,30 +1,33 @@
-import type { Car } from "@/app/products/cars.d.ts";
+import { PocketBaseClient } from "@/app/pocketbase.provider";
+import type { Car } from "@/app/products/cars";
 import type { Housing } from "@/app/products/housing.d.ts";
-import { environment } from "@/environments/environment";
-import { Injectable } from "@angular/core";
-import pocketbase from "pocketbase"
+import { inject, Injectable } from "@angular/core";
 
 interface CartItem {
     type: 'car' | 'apartment' | 'house'
-    product: Car
-    other: Housing
+    expand:{ car: Car }
+    housing: Housing
 }
 
-@Injectable()
+@Injectable({ providedIn: 'root' })
 export class CartService {
-    pb = new pocketbase(environment.pb_url)
+    readonly #pocketbase = inject(PocketBaseClient);
 
     constructor() { }
 
-    async addItem(id: string) {
-        await this.pb.collection('cart_items').create({ product: id })
+    async addItem(type: 'car' | 'apartment' | 'house', housing?: Housing, carID?: string) {
+        if (type === 'car') {
+            await this.#pocketbase.collection('cart_items').create({ type, car: carID })
+        } else if (type === 'apartment' || type === 'house') {
+            await this.#pocketbase.collection('cart_items').create({ type, housing: housing })
+        }
     }
 
-    async removeItem(id: string) {
-        await this.pb.collection('cart_items').delete(id)
+    async removeItem(cartItemID: string) {
+        await this.#pocketbase.collection('cart_items').delete(cartItemID)
     }
 
     async getItems() {
-        return await this.pb.collection('cart_items').getFullList<CartItem>()
+        return await this.#pocketbase.collection('cart_items').getFullList<CartItem>({ expand: 'car' })
     }
 }
