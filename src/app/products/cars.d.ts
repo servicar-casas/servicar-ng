@@ -11,8 +11,3 @@ export interface Car {
   maxPrice?: number
   priority: number
 }
-
-export interface Company {
-  name: string
-  nameUrl: string
-}

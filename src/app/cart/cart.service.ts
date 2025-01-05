@@ -5,7 +5,7 @@ import { inject, Injectable } from "@angular/core";
 
 interface CartItem {
     type: 'car' | 'apartment' | 'house'
-    expand:{ car: Car }
+    expand: { car: Car }
     housing: Housing
 }
 

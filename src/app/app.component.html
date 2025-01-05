@@ -1,1 +1,16 @@
 <router-outlet />
+
+<input type="text" list="cities" placeholder="Cidade" (keyup.enter)="addSelected($event)" />
+
+<datalist id="cities">
+  <option *ngFor="let city of cities" [value]="city"></option>
+</datalist>
+
+<ul>
+  <li *ngFor="let city of selectedCities"><button (click)="removeCity(city)">{{ city }}</button></li>
+</ul>
+
+<input type="text" list="cars" placeholder="Carro" (input)="searchCar$.next($any($event.target).value)"/>
+<datalist id="cars">
+    <option *ngFor="let car of searchedCars" [value]="car.name + ' - ' + car.company"></option>
+</datalist>
